@@ -256,6 +256,8 @@ void view_epc_alloc(UHFReaderApp* App) {
     FuriString* ReservedMem = furi_string_alloc();
     furi_string_set_str(ReservedMem, "Press Read!");
 
+    
+
     //Setting default values for the view model
     ModelEpc->User = UserMem;
     ModelEpc->Epc = Epc;
@@ -269,6 +271,8 @@ void view_epc_alloc(UHFReaderApp* App) {
     ModelEpc->ScrollingTextRes = "RES VALUE HERE";
     ModelEpc->ScrollOffsetMem = 0;
     ModelEpc->ScrollingTextMem = "MEM VALUE HERE";
+    ModelEpc->Crc = furi_string_alloc_set("XXXX");
+    ModelEpc->Pc = furi_string_alloc_set("XXXX");
     view_dispatcher_add_view(App->ViewDispatcher, UHFReaderViewEpcDump, App->ViewEpc);
 }
 

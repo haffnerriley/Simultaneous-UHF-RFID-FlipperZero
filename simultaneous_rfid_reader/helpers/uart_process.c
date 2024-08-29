@@ -1,7 +1,8 @@
 #include "../app.h"
+
 /**
- * @brief      Callback for handling UART input
- * @details    This function is called there is content to read in the buffer
+ * @brief      Callback for handling UART input for the M6E & M7E
+ * @details    This function is called there is content to read in the buffer. This will be modified to support locking, killing, and other commands
  * @param      line     The current line in the buffer to read
  * @param      context  The UHFReaderApp
 */
@@ -89,7 +90,8 @@ void uart_demo_process_line(FuriString* Line, void* Context) {
             furi_string_free(TempTid);
             furi_string_free(TempRes);
             furi_string_free(TempMem);
-
+            dolphin_deed(DolphinDeedRfidAdd);
+            notification_message(App->Notifications, &sequence_success);
         } else if(strcmp(furi_string_get_cstr(Line), "EVBAD") == 0) {
             with_view_model(
                 App->ViewWrite,
@@ -140,7 +142,8 @@ void uart_demo_process_line(FuriString* Line, void* Context) {
             furi_string_free(TempTid);
             furi_string_free(TempEpc);
             furi_string_free(TempMem);
-
+            dolphin_deed(DolphinDeedRfidAdd);
+            notification_message(App->Notifications, &sequence_success);
         }
         // Handles error if write failed for reserved memory
         else if(strcmp(furi_string_get_cstr(Line), "RVBAD") == 0) {
@@ -197,7 +200,8 @@ void uart_demo_process_line(FuriString* Line, void* Context) {
             furi_string_free(TempRes);
             furi_string_free(TempEpc);
             furi_string_free(TempMem);
-
+            dolphin_deed(DolphinDeedRfidAdd);
+            notification_message(App->Notifications, &sequence_success);
         }
 
         // Handles error if write failed for TID
@@ -255,7 +259,8 @@ void uart_demo_process_line(FuriString* Line, void* Context) {
             furi_string_free(TempTid);
             furi_string_free(TempEpc);
             furi_string_free(TempRes);
-
+            dolphin_deed(DolphinDeedRfidAdd);
+            notification_message(App->Notifications, &sequence_success);
         }
 
         // Handles failed User Memory writes
@@ -392,6 +397,9 @@ void uart_demo_process_line(FuriString* Line, void* Context) {
         with_view_model(
             App->ViewRead, UHFReaderConfigModel * Model, { Model->IsReading = false; }, Redraw);
         App->State = UHFReaderStateIdle;
+        dolphin_deed(DolphinDeedRfidReadSuccess);
+        notification_message(App->Notifications, &uhf_sequence_blink_stop);
+        notification_message(App->Notifications, &sequence_success);
         break;
     // State after done collecting EPCs
     case UHFReaderStateDoneCollecting:

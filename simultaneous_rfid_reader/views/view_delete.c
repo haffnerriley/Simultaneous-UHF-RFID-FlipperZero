@@ -39,7 +39,7 @@ void uhf_reader_view_delete_draw_callback(Canvas* canvas, void* model) {
     //Calculate the length of the scrolling text
     uint32_t Len = strlen(MyModel->ScrollingText);
 
-    //I am sure there is a better way to do this that involves slightly safer memory management...
+    //I am sure there is a better way to do this that involves slightly safer memory management (i.e. malloc...)
     char VisiblePart[ScreenWidthChars + 2];
     memset(VisiblePart, ' ', ScreenWidthChars);
     VisiblePart[ScreenWidthChars] = '\0';

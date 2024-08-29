@@ -93,11 +93,11 @@ static UHFReaderApp* uhf_reader_app_alloc() {
     App->CurResIndex = 1;
     App->CurMemIndex = 1;
     App->FileName = (char*)malloc(App->NameSize);
-
+    
     //Creating the initial GUI
     Gui* Gui = furi_record_open(RECORD_GUI);
     App->ViewDispatcher = view_dispatcher_alloc();
-    view_dispatcher_enable_queue(App->ViewDispatcher);
+    //view_dispatcher_enable_queue(App->ViewDispatcher);
     view_dispatcher_attach_to_gui(App->ViewDispatcher, Gui, ViewDispatcherTypeFullscreen);
     view_dispatcher_set_event_callback_context(App->ViewDispatcher, App);
 
@@ -107,6 +107,8 @@ static UHFReaderApp* uhf_reader_app_alloc() {
     view_read_alloc(App);
     view_saved_menu_alloc(App);
     view_tag_actions_alloc(App);
+    view_lock_alloc(App);
+    view_kill_alloc(App);
     view_write_alloc(App);
     view_epc_alloc(App);
     view_epc_info_alloc(App);
@@ -123,6 +125,7 @@ static UHFReaderApp* uhf_reader_app_alloc() {
     uart_helper_set_baud_rate(App->UartHelper, DEVICE_BAUDRATE);
     uart_helper_set_delimiter(App->UartHelper, LINE_DELIMITER, INCLUDE_LINE_DELIMITER);
     uart_helper_set_callback(App->UartHelper, uart_demo_process_line, App);
+    
     return App;
 }
 
@@ -141,8 +144,20 @@ static void uhf_reader_app_free(UHFReaderApp* App) {
     furi_record_close(RECORD_GUI);
     
     //Freeing the UART helper
-    uart_helper_free(App->UartHelper);
+    if(App->UHFModuleType != YRM100X_MODULE){
+        uart_helper_free(App->UartHelper);
+    }
+    else{
+        //Free Tag Wrapper
+        uhf_tag_wrapper_free(App->YRM100XWorker->uhf_tag_wrapper);
+
+        //Freeing yrm100x worker 
+        uhf_worker_stop(App->YRM100XWorker);
+        uhf_worker_free(App->YRM100XWorker);
+    }
     
+    
+
     //Freeing all views, widgets, and menus
     view_delete_free(App);
     view_delete_success_free(App);
@@ -154,6 +169,8 @@ static void uhf_reader_app_free(UHFReaderApp* App) {
     view_config_free(App);
     view_saved_free(App);
     view_tag_actions_free(App);
+    view_lock_free(App);
+    view_kill_free(App);
     
     //Freeing the main menu view
     view_dispatcher_remove_view(App->ViewDispatcher, UHFReaderViewSubmenu);
@@ -181,8 +198,24 @@ static void uhf_reader_app_free(UHFReaderApp* App) {
 */
 int32_t main_uhf_reader_app(void* _p) {
     UNUSED(_p);
+    Expansion* expansion = furi_record_open(RECORD_EXPANSION);
+    expansion_disable(expansion);
+    
+    bool PowerOn = false;
+    
+    if(!furi_hal_power_is_otg_enabled()) {
+        furi_hal_power_enable_otg();
+        PowerOn = true;
+    }
+    
     UHFReaderApp* App = uhf_reader_app_alloc();
     view_dispatcher_run(App->ViewDispatcher);
+
+    if(PowerOn) {
+        furi_hal_power_disable_otg();
+    }
     uhf_reader_app_free(App);
+    expansion_enable(expansion);
+    furi_record_close(RECORD_EXPANSION);
     return 0;
 }
