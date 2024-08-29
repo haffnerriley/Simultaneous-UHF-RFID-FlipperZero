@@ -4,6 +4,8 @@
 //Function Declarations
 void uhf_reader_view_read_draw_callback(Canvas* canvas, void* model);
 
+char* convert_to_hex_string(uint8_t* array, size_t length);
+
 bool uhf_reader_view_read_input_callback(InputEvent* event, void* context);
 
 uint32_t uhf_reader_navigation_read_submenu_callback(void* context);

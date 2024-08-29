@@ -1,6 +1,8 @@
 #pragma once
 
 #include "../app.h"
+#include "../helpers/yrm100x_module.h"
+#include "../helpers/yrm100x_tag.h"
 
 //Function Declarations
 void uhf_reader_view_write_draw_callback(Canvas* canvas, void* model);
@@ -8,6 +10,8 @@ void uhf_reader_view_write_draw_callback(Canvas* canvas, void* model);
 void uhf_reader_view_write_timer_callback(void* context);
 
 void uhf_reader_view_write_enter_callback(void* context);
+
+void uhf_write_tag_worker_callback(UHFWorkerEvent event, void* context);
 
 void uhf_reader_view_write_exit_callback(void* context);
 
@@ -24,3 +28,4 @@ uint32_t uhf_reader_navigation_write_exit_callback(void* context);
 void view_write_alloc(UHFReaderApp* App);
 
 void view_write_free(UHFReaderApp* App);
+

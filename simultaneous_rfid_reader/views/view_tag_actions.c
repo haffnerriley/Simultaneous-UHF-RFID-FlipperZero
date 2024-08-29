@@ -23,6 +23,8 @@ void uhf_reader_rename_text_updated(void* context) {
     FuriString* TempTid = furi_string_alloc();
     FuriString* TempRes = furi_string_alloc();
     FuriString* TempMem = furi_string_alloc();
+    FuriString* TempCrc = furi_string_alloc();
+    FuriString* TempPc = furi_string_alloc();
     FuriString* TempStr = furi_string_alloc();
     FuriString* TempTag = furi_string_alloc();
     FuriString* TempEpcStr = furi_string_alloc();
@@ -45,11 +47,18 @@ void uhf_reader_rename_text_updated(void* context) {
             char* ExtractedTid = extract_tid(InputString);
             char* ExtractedRes = extract_res(InputString);
             char* ExtractedMem = extract_mem(InputString);
+            char* ExtractedCrc = extract_crc(InputString);
+            char* ExtractedPc = extract_pc(InputString);
             furi_string_set_str(TempEpcStr, ExtractedEpc);
             furi_string_set_str(TempTid, ExtractedTid);
             furi_string_set_str(TempRes, ExtractedRes);
             furi_string_set_str(TempMem, ExtractedMem);
+            furi_string_set_str(TempCrc, ExtractedCrc);
+            furi_string_set_str(TempPc, ExtractedPc);
             flipper_format_file_close(App->EpcFile);
+
+            
+            free(ExtractedEpc);
         }
     }
 
@@ -64,12 +73,14 @@ void uhf_reader_rename_text_updated(void* context) {
     furi_string_printf(NumEpcs, "Tag%ld", App->SelectedTagIndex);
     furi_string_printf(
         EpcAndName,
-        "%s:%s:%s:%s:%s",
+        "%s:%s:%s:%s:%s:%s:%s",
         App->TempSaveBuffer,
         furi_string_get_cstr(TempEpcStr),
         furi_string_get_cstr(TempTid),
         furi_string_get_cstr(TempRes),
-        furi_string_get_cstr(TempMem));
+        furi_string_get_cstr(TempMem),
+        furi_string_get_cstr(TempPc),
+        furi_string_get_cstr(TempCrc));
 
     //Write to the file and update the current string in its index
     if(!flipper_format_update_string_cstr(
@@ -87,6 +98,8 @@ void uhf_reader_rename_text_updated(void* context) {
     furi_string_free(TempTid);
     furi_string_free(TempRes);
     furi_string_free(TempMem);
+    furi_string_free(TempCrc);
+    furi_string_free(TempPc);
     furi_string_free(TempStr);
     furi_string_free(TempTag);
 
@@ -211,7 +224,12 @@ void uhf_reader_submenu_tag_info_callback(void* context, uint32_t index) {
     case UHFReaderSubmenuIndexTagWrite:
         view_dispatcher_switch_to_view(App->ViewDispatcher, UHFReaderViewWrite);
         break;
-
+    case UHFReaderSubmenuIndexTagLock:
+        view_dispatcher_switch_to_view(App->ViewDispatcher, UHFReaderViewLock);
+        break;
+    case UHFReaderSubmenuIndexTagKill:
+        view_dispatcher_switch_to_view(App->ViewDispatcher, UHFReaderViewKill);
+        break;
     //Handles the delete screen
     case UHFReaderSubmenuIndexTagDelete:
         view_dispatcher_switch_to_view(App->ViewDispatcher, UHFReaderViewDelete);
@@ -257,6 +275,18 @@ void view_tag_actions_alloc(UHFReaderApp* App) {
         App->SubmenuTagActions,
         "Write",
         UHFReaderSubmenuIndexTagWrite,
+        uhf_reader_submenu_tag_info_callback,
+        App);
+    submenu_add_item(
+        App->SubmenuTagActions,
+        "Lock",
+        UHFReaderSubmenuIndexTagLock,
+        uhf_reader_submenu_tag_info_callback,
+        App);
+    submenu_add_item(
+        App->SubmenuTagActions,
+        "Kill",
+        UHFReaderSubmenuIndexTagKill,
         uhf_reader_submenu_tag_info_callback,
         App);
     submenu_add_item(

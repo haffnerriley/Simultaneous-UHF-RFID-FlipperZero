@@ -128,3 +128,129 @@ void delete_and_update_entry(void* context, uint32_t KeyToDelete) {
     flipper_format_file_close(App->EpcIndexFile);
     furi_string_free(NewNumEpcs);
 }
+
+
+/**
+ * @brief      Function to convert a hex character to its integer value
+ * @details    This function converts a hex character to its integer value in ASCII
+ * @param      char c  - The char to convert
+ * @return     the int - the converted integer       
+*/
+uint8_t hex_char_to_int(char c) {
+    if (c >= '0' && c <= '9') {
+        return c - '0';
+    } else if (c >= 'A' && c <= 'F') {
+        return c - 'A' + 10;
+    } else if (c >= 'a' && c <= 'f') {
+        return c - 'a' + 10;
+    }
+    return 0;
+}
+
+/**
+ * @brief      Function to convert a hex string to byte array
+ * @details    This function converts a hex string to a byte array
+ * @param      char hex_string  - The string to convert
+ * @param      the byte_array - the allocated byte array that should be empty and passed in   
+ * @param      the lenght - The length variable fort the byte array     
+*/
+void hex_string_to_bytes(const char* hex_string, uint8_t* byte_array, size_t* byte_array_len) {
+    size_t hex_len = strlen(hex_string);
+    if (hex_len % 2 != 0) {
+        // Handle error: hex string length must be even
+        *byte_array_len = 0;
+        return;
+    }
+    
+    *byte_array_len = hex_len / 2;
+    for (size_t i = 0; i < *byte_array_len; i++) {
+        byte_array[i] = (hex_char_to_int(hex_string[2 * i]) << 4) | hex_char_to_int(hex_string[2 * i + 1]);
+    }
+}
+
+/**
+ * @brief      Function to convert a hex string to byte array (uint16)
+ * @details    This function converts a hex string to a byte array
+ * @param      char hex_string  - The string to convert
+ * @param      the byte_array - the allocated byte array that should be empty and passed in   
+ * @param      the lenght - The length variable fort the byte array     
+*/
+void hex_string_to_uint16(const char* hex_string, uint16_t* uint16_array, size_t* uint16_array_len) {
+    size_t hex_len = strlen(hex_string);
+    if (hex_len % 4 != 0) {
+        // Handle error: hex string length must be a multiple of 4 for uint16_t conversion
+        *uint16_array_len = 0;
+        return;
+    }
+    
+    *uint16_array_len = hex_len / 4;
+    for (size_t i = 0; i < *uint16_array_len; i++) {
+        uint16_array[i] = (hex_char_to_int(hex_string[4 * i]) << 12) |
+                          (hex_char_to_int(hex_string[4 * i + 1]) << 8) |
+                          (hex_char_to_int(hex_string[4 * i + 2]) << 4) |
+                          hex_char_to_int(hex_string[4 * i + 3]);
+    }
+}
+
+/**
+ * @brief      Function to convert a uint16 value to a hex string 
+ * @details    Function to convert a uint16 value to a hex string
+ * @param      uint16 value  - value to convert
+ * @return     char* pointer to the string     
+*/
+char* uint16_to_hex_string(uint16_t value) {
+    // Allocate memory for the hex string (4 characters for hex + 1 for null terminator)
+    char* hex_string = (char*)malloc(5 * sizeof(char));
+    if (hex_string == NULL) {
+        // Handle memory allocation failure
+        return NULL;
+    }
+    
+    // Convert the value to hex and store it in the string
+    snprintf(hex_string, 5, "%04X", value);
+    
+    return hex_string;
+}
+
+/**
+ * @brief       Function to combine two arrays together 
+ * @details    Function to combine two arrays together specifically for the PCs and CRCs...
+ * @param      array1 - the first array to combine 
+ * @param      array2 - the second array to combine
+ * @return     char* pointer to the string     
+*/
+char* combineArrays(const char* array1, const char* array2) {
+    // Allocate memory for the new array (size 4 + 4 = 8)
+    char* combinedArray = (char*)malloc(16 * sizeof(char));
+    if (combinedArray == NULL) {
+        return NULL;
+    }
+
+    // Copy the elements from the first array
+    memcpy(combinedArray, array1, 8 * sizeof(char));
+
+    // Copy the elements from the second array
+    memcpy(combinedArray + 8, array2, 8 * sizeof(char));
+
+    return combinedArray;
+}
+
+/**
+ * @brief      Function that converts byte array to uint32
+ * @details    Function that converts byte array to 32-bit int 
+ * @param      bytes - the byte array
+ * @param      length - the length of the byte array
+ * @return     uint32 the 32 bit int     
+*/
+uint32_t bytes_to_uint32(uint8_t* bytes, size_t length) {
+    if (length > sizeof(uint32_t)) {
+        return 0;
+    }
+
+    uint32_t result = 0;
+    for (size_t i = 0; i < length; i++) {
+        result = (result << 8) | bytes[i];
+    }
+
+    return result;
+}

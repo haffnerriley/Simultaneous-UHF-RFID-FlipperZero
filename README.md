@@ -2,7 +2,7 @@
 Now available on the official Flipper Zero [app catalog](https://github.com/flipperdevices/flipper-application-catalog)!
 
 ## Overview
-This app is designed to work with the M6e Nano UHF RFID Reader and the Flipper Zero. This app supports reading up to 150 tags per second, writing to tags (EPC, TID, Reserved, and User Memory Banks), viewing all tag information, saving tags, and more!
+This app is designed to work with the M6e Nano, M7E Hecto, and YRM100 UHF RFID Readers and the Flipper Zero. This app supports reading up to 150 tags per second (M6E & M7E only), writing to tags (EPC, TID, Reserved, and User Memory Banks), viewing all tag information, saving tags, and more! 
 
 ![Main Menu](images/uhf-rfid-m6e-main-menu.png)
 
@@ -16,12 +16,19 @@ This app is designed to work with the M6e Nano UHF RFID Reader and the Flipper Z
 
 **Please note that all values scroll across the screen.
 
+![Lock Menu](images/lock-screen.png)
+
+![Kill Tag Screen](images/kill-screen.png)
+
+## Special Note for M6E & M7E Users
+Currently, not all features work for the M6E & M7E. In the next release, support for locking, killing, and reading PC/CRC will be added for the M6E & M7E. Stay on the first version of the app to have a more stable version of the app. 
+
 ## Coming Soon
-In the future, I plan on developing a custom pcb that utilizes the M6e Nano module offering a powerful UHF Reader that plugs right into the Flipper Zero! Additionally, I plan to add support for other UHF RFID modules such as the YRM1001 module. Some other feature enhancements to the configuration menu will also be added including custom baud rate, power and antenna selection, UHF RFID module selection, and selecting/setting custom UHF RFID tag types (adjusting read/write size for memory banks).
+ In the future, I plan on developing a custom pcb that utilizes the M6e Nano module offering a powerful UHF Reader that plugs right into the Flipper Zero! Some other feature enhancements to the configuration menu will also be added in the future including antenna selection, saving configuration menu settings, and selecting/detecting/setting custom UHF RFID tag types (adjusting read/write size for memory banks).
 
 
 ## Features
-- Read and view up to 150 UHF RFID tags at once!
+- Read and view up to 150 UHF RFID tags at once (M6E & M7E Only)!
   - EPC, TID, User, and Reserved Memory Banks
   - Can cycle through multiple tags from a single read!
 - Save, rename, delete and view UHF tags on your flipper!
@@ -31,22 +38,33 @@ In the future, I plan on developing a custom pcb that utilizes the M6e Nano modu
   - TID Memory Bank (not supported if tag is locked)
   - User Memory Bank
   - Reserved Memory Bank 
+- Lock UHF Tags
+  - Lock each memory bank of the UHF Tag (assuming you know the access password, and the tag isn't permanently locked/unlocked)
+  - Set access password 
+- Kill UHF Tags
+  - Set the kill password
+  - Permanently inactivate a tag 
 - UHF RFID Reader Configuration
   - Set RF Power
+  - Set UHF Module
+  - Set Baud Rate
+  - Set Region
+  - Set default access password used for reading/writing/locking operations
+  - Save on Write (Set this to Yes if you want saved tags to update after writing to them)
   - Set antenna type (WIP)
 - Features coming soon: 
-  - Support for other UHF RFID Modules (YRM1001)
-  - Support for custom baud rate, region, protocol, and more!
   - Set custom size for user/reserved memory banks to read
   - Custom PCB with M6e Nano module and external antenna support!
+  - Adding support for new features for the M6E & M7E
 
 ## Hardware Requirements
 
 Currently, this Flipper Zero application requires an [M6e Nano](https://www.jadaktech.com/product/thingmagic-m6e-nano-uhf-rain-rfid/) compatible UHF RFID Reader. I recommend one of the following options:
 - [SparkFun Simultaneous RFID Reader](https://www.sparkfun.com/products/14066)
 - The [M7E Hecto](https://www.sparkfun.com/products/24738) that just came out should work too, however, this I haven't been able to test.
+- The [YRM100](https://www.alibaba.com/product-detail/Invelion-YRM-1001-The-antenna-is_1600873986609.html) Is now supported for all features!
 
-Additionally, a [Raspberry Pi Zero](https://www.adafruit.com/product/2885) is required in order to run the [ThingMagic Mercury API](https://github.com/gotthardp/python-mercuryapi)
+Additionally, if you are using a M6E or M7E, a [Raspberry Pi Zero](https://www.adafruit.com/product/2885) is required in order to run the [ThingMagic Mercury API](https://github.com/gotthardp/python-mercuryapi)
 - I hope to eliminate the need for the RPi, however, I thought having it could allow for easier adoption of different UHF RFID readers. 
 
 Also, you need the Flipper Zero which is available from [Flipper Devices](https://www.flipperdevices.com).
@@ -56,13 +74,19 @@ Also, you need the Flipper Zero which is available from [Flipper Devices](https:
 
 1. Clone this GitHub repository to the `applications_user` folder of your Flipper Zero using the firmware of your choice.
 2. Using VSCode with the desired firmware:
-     - Press `Ctrl+Shift+B` in VScode inside the simultaneous-rfid-reader folder
+     - Press `Ctrl+Shift+B` in VScode inside the simultaneous_rfid_reader folder
      - Select the `Launch App on Flipper` option
-     - If you do not have VScode you can use the following command in your terminal `./fbt COMPACT=1 DEBUG=0 launch APPSRC=applications_user\simultaneous-rfid-reader`
-3. Now that you have the app set up, you can follow the instructions below to get the Raspberry Pi Zero working correctly.
+     - If you do not have VScode you can use the following command in your terminal `./fbt COMPACT=1 DEBUG=0 launch APPSRC=applications_user\simultaneous_rfid_reader`
+3. Now that you have the app set up, you can follow the instructions below to get the Raspberry Pi Zero working correctly (M6E & M7E Users Only!).
+
+## YRM100 Wiring
+
+![YRM100 Pinout](images/yrm100-pinout.png)
+
+1. To connect the YRM100 to the FLipperZero, just follow the schematic above. Then the module should be ready to commuicate over UART!
 
 
-## UHF RFID Reader & Raspberry Pi Zero Setup
+## UHF RFID Reader & Raspberry Pi Zero Setup (M6E & M7E Users Only!)
 
 ![Raspberry Pi Zero Pinout](images/rpi-zero-pinout.png)
 
@@ -103,6 +127,8 @@ I found a few resources useful while developing this app:
 3. The [Python Wrapper](https://github.com/gotthardp/python-mercuryapi/tree/master) for the ThingMagic Mercury API is a great tool for working with any ThingMagic readers. 
 
 4. The `soft_uart` module was super helpful for creating another serial port on the [Raspberry Pi Zero](https://github.com/adrianomarto/soft_uart). 
+
+5. Most of the functionality for reading, writing, and interacting with the YRM100 module was modified from [Frux-C's](https://github.com/frux-c/uhf_rfid) UHF-RFID App for the FlipperZero. 
 
 ## Contributions
 

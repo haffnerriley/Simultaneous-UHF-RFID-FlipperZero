@@ -94,7 +94,8 @@ void uhf_reader_view_delete_success_enter_callback(void* context) {
     //Call the helper functions below to update the saved UHF tag submenu
     delete_and_update_entry(context, App->SelectedTagIndex);
     update_dictionary_keys(context);
-    
+    dolphin_deed(DolphinDeedRfidReadSuccess);
+    notification_message(App->Notifications, &sequence_success);
     //Start the timer for the delete success screen
     furi_assert(App->Timer == NULL);
     App->Timer =
