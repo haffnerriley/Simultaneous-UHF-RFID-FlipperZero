@@ -142,4 +142,4 @@ Feel free to reach out, or open a PR for bug fixes, ideas, or new feature reques
 ## Contact
 
 Riley Haffner
-Haffnerriley@wustl.edu
+wrh@rileyhaffner.com
