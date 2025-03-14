@@ -1,4 +1,4 @@
-# Flipper Zero UHF RFID App
+# Flipper Zero UHF RFID App v1.1.1
 
 ## Overview
 This app is designed to work with the M6e Nano UHF RFID Reader and the Flipper Zero. This app supports reading up to 150 tags per second, writing to tags (EPC, TID, Reserved, and User Memory Banks), viewing all tag information, saving tags, and more!
