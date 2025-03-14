@@ -28,8 +28,8 @@ void view_config_alloc(UHFReaderApp* App) {
     //Initializing configuration setting variables
     App->Setting1Values[0] = 1;
     App->Setting1Values[1] = 2;
-    App->Setting1Names[0] = "Connect";
-    App->Setting1Names[1] = "Disconnect";
+    App->Setting1Names[0] = "Disconnected";
+    App->Setting1Names[1] = "Connected";
     App->ReaderConnected = false;
     App->Setting1ConfigLabel = "Connection";
     App->Setting2ConfigLabel = "Power Level";
