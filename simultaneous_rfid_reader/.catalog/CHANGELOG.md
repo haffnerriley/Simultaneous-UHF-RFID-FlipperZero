@@ -16,3 +16,7 @@ v1.1.1 - 2025-03-14:
 - Changed label for connection setting in configuration menu to display the current reader connection status
 - Performed some debugging and found that using a baud rate of 384000 for the YRM100 series readers results in the optimal performance 
 - In the next release, I will be fixing reading for the other baud rates 9600 and 115200
+
+v1.1.2 - 2025-05-03:
+- Added bug fixes to make reading more consistent with all baud rates
+- Added error handling and UI enhancements to prevent users from changing settings before connecting to the reader.

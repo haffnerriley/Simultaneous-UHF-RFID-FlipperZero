@@ -1,4 +1,4 @@
-# Flipper Zero UHF RFID App v1.1.1
+# Flipper Zero UHF RFID App v1.1.2
 Now available on the official Flipper Zero [app catalog](https://github.com/flipperdevices/flipper-application-catalog)!
 
 ## Please Read This!
