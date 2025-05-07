@@ -2,7 +2,7 @@
 Now available on the official Flipper Zero [app catalog](https://github.com/flipperdevices/flipper-application-catalog)!
 
 ## Please Read This!
-If you are unfamilar with the app, please take the time to read through the README as it contains all relevant instructions. Connect to the reader first before changing any settings (baud rate, power, region, etc...). Currently, the YRM100 works best with the 384000 baud rate. A fix for the other baud rates will be released soon! 
+If you are unfamilar with the app, please take the time to read through the README as it contains all relevant instructions. Please open a GitHub Issue for any bugs or feature requests. Join [this](https://discord.com/channels/740930220399525928/1136167977708957737) discord channel to talk with other UHF RFID enthusiasts and to track information or updates on the app!
 
 ## Overview
 This app is designed to work with the M6e Nano, M7E Hecto, and YRM100 UHF RFID Readers and the Flipper Zero. This app supports reading up to 150 tags per second (M6E & M7E only), writing to tags (EPC, TID, Reserved, and User Memory Banks), viewing all tag information, saving tags, and more! 
